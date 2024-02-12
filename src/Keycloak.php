@@ -8,6 +8,7 @@ use Fschmtt\Keycloak\Http\Client;
 use Fschmtt\Keycloak\Http\CommandExecutor;
 use Fschmtt\Keycloak\Http\PropertyFilter;
 use Fschmtt\Keycloak\Http\QueryExecutor;
+use Fschmtt\Keycloak\OAuth\GrantType;
 use Fschmtt\Keycloak\OAuth\TokenStorage\InMemory;
 use Fschmtt\Keycloak\OAuth\TokenStorageInterface;
 use Fschmtt\Keycloak\Resource\AttackDetection;
@@ -31,8 +32,9 @@ class Keycloak
 
     public function __construct(
         private readonly string $baseUrl,
-        private readonly string $username,
-        private readonly string $password,
+        private readonly string $realm = 'master',
+        private readonly string $clientId = 'admin-cli',
+        private readonly GrantType $grantType,
         private readonly TokenStorageInterface $tokenStorage = new InMemory(),
     ) {
         $this->client = new Client($this, new GuzzleClient(), $this->tokenStorage);
@@ -46,14 +48,9 @@ class Keycloak
         return $this->baseUrl;
     }
 
-    public function getUsername(): string
+    public function getGrantType(): GrantType
     {
-        return $this->username;
-    }
-
-    public function getPassword(): string
-    {
-        return $this->password;
+        return $this->grantType;
     }
 
     public function getVersion(): string
